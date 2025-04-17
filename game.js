@@ -4,6 +4,7 @@ let player;
 let platforms = [];
 let keys = {};
 let gravity = 0.5;
+let viewportOffset = 0;
 
 class Player {
   constructor(x, y, width, height) {
@@ -28,7 +29,6 @@ class Player {
 
   update() {
     this.speedY += gravity;
-
     this.x += this.speedX;
     this.y += this.speedY;
 
@@ -36,6 +36,19 @@ class Player {
       this.x = 0;
     } else if (this.x + this.width > gameContainer.offsetWidth) {
       this.x = gameContainer.offsetWidth - this.width;
+    }
+
+    if (this.y < gameContainer.offsetHeight / 2 && this.speedY < 0) {
+      viewportOffset -= this.speedY;
+      console.log("Viewport offset:", viewportOffset);
+      this.y -= this.speedY;
+
+      platforms.forEach((platform) => {
+        platform.y += -this.speedY;
+        platform.updatePosition();
+      });
+
+      updatePlatforms();
     }
 
     this.updatePosition();
@@ -164,13 +177,34 @@ function checkCollisions() {
   }
 }
 
+function updatePlatforms() {
+  platforms = platforms.filter((platform) => {
+    if (platform.y > gameContainer.offsetHeight) {
+      platform.remove();
+      return false;
+    }
+    return true;
+  });
+
+  while (platforms.length < 7) {
+    let x = Math.random() * (gameContainer.offsetWidth - 100);
+
+    let highestPlatform = platforms.reduce(
+      (highest, platform) => (platform.y < highest ? platform.y : highest),
+      gameContainer.offsetHeight
+    );
+
+    let y = highestPlatform - Math.random() * 80 - 50;
+
+    platforms.push(new Platform(x, y, 100, 10));
+  }
+}
 function gameLoop() {
   if (!gameRunning) return;
 
   handleInput();
   player.update();
   checkCollisions();
-
   requestAnimationFrame(gameLoop);
 }
 
