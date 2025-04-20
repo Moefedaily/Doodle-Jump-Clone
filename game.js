@@ -1,3 +1,18 @@
+document.addEventListener("DOMContentLoaded", function () {
+  const menuContainer = document.getElementById("menu-container");
+  const gameContainer = document.getElementById("game-container");
+  const startButton = document.getElementById("start-button");
+
+  gameRunning = false;
+
+  startButton.addEventListener("click", function () {
+    menuContainer.classList.add("hidden");
+    gameContainer.classList.remove("hidden");
+
+    init();
+  });
+});
+
 let gameRunning = false;
 let score = 0;
 let player;
@@ -16,6 +31,7 @@ class Player {
     this.speedY = 0;
     this.jumpForce = -15;
     this.element = document.getElementById("player");
+    this.image = this.element.querySelector("img");
 
     this.element.style.width = width + "px";
     this.element.style.height = height + "px";
@@ -31,6 +47,12 @@ class Player {
     this.speedY += gravity;
     this.x += this.speedX;
     this.y += this.speedY;
+
+    if (this.speedX < 0) {
+      this.image.src = "assets/doodle-left.png";
+    } else if (this.speedX > 0) {
+      this.image.src = "assets/doodle.png";
+    }
 
     if (this.x < 0) {
       this.x = 0;
@@ -48,6 +70,9 @@ class Player {
         platform.updatePosition();
       });
 
+      score += -this.speedY;
+      updateScore();
+
       updatePlatforms();
     }
 
@@ -60,18 +85,25 @@ class Player {
 }
 
 class Platform {
-  constructor(x, y, width, height) {
+  constructor(x, y, width, height, type = "normal") {
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
+    this.type = type;
+
+    this.isMoving = type === "moving";
+    this.moveSpeed = 1;
+    this.moveDirection = Math.random() < 0.5 ? -1 : 1;
 
     this.element = document.createElement("div");
-    this.element.className = "platform";
+    this.element.className = "platform platform-" + type;
     this.element.style.width = width + "px";
     this.element.style.height = height + "px";
     this.element.style.left = x + "px";
     this.element.style.top = y + "px";
+
+    this.element.style.backgroundImage = `url('assets/platform-${type}.png')`;
 
     gameScreen.appendChild(this.element);
   }
@@ -83,6 +115,19 @@ class Platform {
 
   remove() {
     this.element.remove();
+  }
+  updateMovement() {
+    if (this.isMoving) {
+      this.x += this.moveSpeed * this.moveDirection;
+
+      if (this.x <= 0) {
+        this.moveDirection = 1;
+      } else if (this.x + this.width >= gameContainer.offsetWidth) {
+        this.moveDirection = -1;
+      }
+
+      this.updatePosition();
+    }
   }
 }
 
@@ -103,7 +148,7 @@ function init() {
     30,
     30
   );
-
+  updateScore();
   createInitialPlatforms();
 
   gameRunning = true;
@@ -121,7 +166,21 @@ function setupEventListeners() {
     console.log("Key released:", e.code);
   });
 
-  console.log("Event listeners set up");
+  document
+    .getElementById("restart-button")
+    .addEventListener("click", function () {
+      document.getElementById("game-over").classList.add("hidden");
+
+      score = 0;
+      updateScore();
+
+      platforms.forEach((platform) => platform.remove());
+      platforms = [];
+      createInitialPlatforms();
+
+      gameRunning = true;
+      gameLoop();
+    });
 }
 
 function createInitialPlatforms() {
@@ -130,22 +189,24 @@ function createInitialPlatforms() {
       gameContainer.offsetWidth / 2 - 50,
       gameContainer.offsetHeight - 50,
       100,
-      10
+      20
     )
   );
 
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 7; i++) {
     let x = Math.random() * (gameContainer.offsetWidth - 100);
     let y = gameContainer.offsetHeight - 150 - i * 80;
-    platforms.push(new Platform(x, y, 100, 10));
+    let type = Math.random() < 0.2 ? "moving" : "normal";
+
+    platforms.push(new Platform(x, y, 100, 30, type));
   }
 }
 
 function handleInput() {
   if (keys["ArrowLeft"]) {
-    player.speedX = -5;
+    player.speedX = -3;
   } else if (keys["ArrowRight"]) {
-    player.speedX = 5;
+    player.speedX = 3;
   } else {
     player.speedX = 0;
   }
@@ -173,7 +234,24 @@ function checkCollisions() {
 
   if (player.y > gameContainer.offsetHeight) {
     console.log("Game over - player fell off screen");
-    player.y = 0;
+
+    const gameOverElement = document.getElementById("game-over");
+    const finalScoreElement = gameOverElement.querySelector(".final-score");
+    finalScoreElement.textContent = "Score: " + Math.floor(score);
+    gameOverElement.classList.remove("hidden");
+
+    gameRunning = false;
+    player.x = gameContainer.offsetWidth / 2 - player.width / 2;
+    player.y = gameContainer.offsetHeight - 100;
+    player.speedY = 0;
+    player.speedX = 0;
+    player.updatePosition();
+
+    const highScore = localStorage.getItem("highScore") || 0;
+    if (score > highScore) {
+      localStorage.setItem("highScore", Math.floor(score));
+      console.log("high score:", Math.floor(score));
+    }
   }
 }
 
@@ -186,7 +264,7 @@ function updatePlatforms() {
     return true;
   });
 
-  while (platforms.length < 7) {
+  while (platforms.length < 10) {
     let x = Math.random() * (gameContainer.offsetWidth - 100);
 
     let highestPlatform = platforms.reduce(
@@ -196,16 +274,24 @@ function updatePlatforms() {
 
     let y = highestPlatform - Math.random() * 80 - 50;
 
-    platforms.push(new Platform(x, y, 100, 10));
+    let type = Math.random() < 0.2 ? "moving" : "normal";
+
+    platforms.push(new Platform(x, y, 100, 30, type));
   }
+}
+
+function updateScore() {
+  const scoreElement = document.getElementById("score");
+  scoreElement.textContent = Math.floor(score);
 }
 function gameLoop() {
   if (!gameRunning) return;
 
   handleInput();
   player.update();
+  platforms.forEach((platform) => {
+    platform.updateMovement();
+  });
   checkCollisions();
   requestAnimationFrame(gameLoop);
 }
-
-window.onload = init;
