@@ -46,6 +46,7 @@ export default class Player {
   }
 
   update() {
+    const baseUrl = import.meta.env.BASE_URL;
     this.handleInput();
 
     this.moveY += this.game.gravity;
@@ -53,9 +54,9 @@ export default class Player {
     this.y += this.moveY;
 
     if (this.moveX < 0) {
-      this.image.src = "/Doodle-Jump-Clone/public/assets/doodleLeft.png";
+      this.image.src = `${baseUrl}public/assets/doodleLeft.png`;
     } else if (this.moveX > 0) {
-      this.image.src = "/Doodle-Jump-Clone/public/assets/doodle.png";
+      this.image.src = `${baseUrl}public/assets/doodle.png`;
     }
 
     // for not going off screen horizontally
