@@ -83,11 +83,9 @@ class Game {
   }
 }
 
-// Initialize on DOM load
 document.addEventListener("DOMContentLoaded", () => {
   const game = new Game();
 
-  // Setup menu button
   const menuContainer = document.getElementById("menu-container");
   const gameContainer = document.getElementById("game-container");
   const startButton = document.getElementById("start-button");

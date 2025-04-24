@@ -53,9 +53,9 @@ export default class Player {
     this.y += this.moveY;
 
     if (this.moveX < 0) {
-      this.image.src = "../public/assets/doodle-left.png";
+      this.image.src = "./public/assets/doodle-left.png";
     } else if (this.moveX > 0) {
-      this.image.src = "../public/assets/doodle.png";
+      this.image.src = "./public/assets/doodle.png";
     }
 
     // for not going off screen horizontally
