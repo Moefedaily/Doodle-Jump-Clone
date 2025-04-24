@@ -20,6 +20,14 @@ class Platform {
 
     this.platformDiv.style.backgroundImage = `url('assets/platform-${type}.png')`;
 
+    if (type === "spring") {
+      this.springElement = document.createElement("div");
+      this.springElement.className = "spring";
+      this.springElement.style.left = width / 2 - 10 + "px";
+      this.springElement.style.top = "-10px";
+      this.element.appendChild(this.springElement);
+    }
+
     game.gameScreen.appendChild(this.platformDiv);
   }
 

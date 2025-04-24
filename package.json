@@ -1,21 +1,16 @@
 {
-  "name": "doodle-jump-clone",
-  "version": "1.0.0",
-  "description": "",
-  "main": "game.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Moefedaily/Doodle-Jump-Clone.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "name": "ninja-jump",
+  "private": true,
+  "version": "0.0.0",
   "type": "module",
-  "bugs": {
-    "url": "https://github.com/Moefedaily/Doodle-Jump-Clone/issues"
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "gh-pages -d dist"
   },
-  "homepage": "https://github.com/Moefedaily/Doodle-Jump-Clone#readme"
+  "devDependencies": {
+    "gh-pages": "^6.3.0",
+    "vite": "^6.3.1"
+  }
 }
