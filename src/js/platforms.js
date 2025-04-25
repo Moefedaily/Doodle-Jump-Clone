@@ -18,8 +18,7 @@ class Platform {
     this.platformDiv.style.left = x + "px";
     this.platformDiv.style.top = y + "px";
 
-    const baseUrl = import.meta.env.BASE_URL;
-    this.platformDiv.style.backgroundImage = `url('${baseUrl}public/assets/platform-${type}.png')`;
+    this.platformDiv.style.backgroundImage = `url('assets/platform-${type}.png')`;
 
     if (type === "spring") {
       this.springElement = document.createElement("div");

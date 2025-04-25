@@ -46,17 +46,18 @@ export default class Player {
   }
 
   update() {
-    const baseUrl = import.meta.env.BASE_URL;
     this.handleInput();
 
     this.moveY += this.game.gravity;
     this.x += this.moveX;
     this.y += this.moveY;
 
+    const currentDir = import.meta.env.BASE_URL;
+    console.log(currentDir);
     if (this.moveX < 0) {
-      this.image.src = `${baseUrl}public/assets/doodleLeft.png`;
+      this.image.src = `${currentDir}public/assets/doodleLeft.png`;
     } else if (this.moveX > 0) {
-      this.image.src = `${baseUrl}public/assets/doodle.png`;
+      this.image.src = `${currentDir}public/assets/doodle.png`;
     }
 
     // for not going off screen horizontally
