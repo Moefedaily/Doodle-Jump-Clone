@@ -52,14 +52,12 @@ export default class Player {
     this.x += this.moveX;
     this.y += this.moveY;
 
-    const currentDir = import.meta.env.BASE_URL;
-    console.log(currentDir);
+    const baseUrl = import.meta.env.BASE_URL;
     if (this.moveX < 0) {
-      this.image.src = `${currentDir}public/assets/doodleLeft.png`;
+      this.image.src = `${baseUrl}/assets/doodleLeft.png`;
     } else if (this.moveX > 0) {
-      this.image.src = `${currentDir}public/assets/doodle.png`;
+      this.image.src = `${baseUrl}/assets/doodle.png`;
     }
-
     // for not going off screen horizontally
     if (this.x < 0) {
       this.x = 0;
