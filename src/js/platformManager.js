@@ -47,7 +47,7 @@ class PlatformManager {
         this.game.gameContainer.offsetHeight
       );
 
-      let y = highestPlatform - Math.random() * 80 - 50;
+      let y = highestPlatform - 90;
       let type = Math.random() < 0.2 ? "moving" : "normal";
 
       this.platforms.push(new Platform(x, y, 100, 30, type, this.game));
